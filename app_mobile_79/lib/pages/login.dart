@@ -18,25 +18,31 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String? _errorMessage;
+  String? _errorMessageUsername;
+  String? _errorMessagePassword;
   bool _isLoading = false;
 
   void _login() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
 
-    if (username.isEmpty || password.isEmpty) {
-      setState(() {
-        _errorMessage = username.isEmpty
-            ? "Username cannot be empty"
-            : "Password cannot be empty";
-      });
-      return;
-    }
+    bool hasError = false;
 
     setState(() {
-      _isLoading = true;
-      _errorMessage = null;
+      if (username.isEmpty) {
+        _errorMessageUsername = "Username cannot be empty";
+        hasError = true;
+      }
+
+      if (password.isEmpty) {
+        _errorMessagePassword = "Password cannot be empty";
+        hasError = true;
+      }
     });
+
+    if (hasError) {
+      return;
+    }
 
     try {
       final result = await AuthService().login(username, password);
@@ -59,6 +65,8 @@ class _LoginPageState extends State<LoginPage> {
         _errorMessage = e is Exception
             ? e.toString().replaceFirst("Exception: ", "")
             : e.toString();
+        _errorMessageUsername = null;
+        _errorMessagePassword = null;
       });
     } finally {
       setState(() {
@@ -133,6 +141,19 @@ class _LoginPageState extends State<LoginPage> {
                           controller: _usernameController,
                         ),
                       ),
+                      SizedBox(height: 2),
+                      if (_errorMessageUsername != null)
+                        Container(
+                          alignment: Alignment.topLeft,
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            _errorMessageUsername!,
+                            style: TextStyle(
+                              color: failed,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
                       SizedBox(height: 10),
                       Semantics(
                         label: 'Password Text Field',
@@ -142,7 +163,19 @@ class _LoginPageState extends State<LoginPage> {
                           placeholder: "Enter your password",
                           controller: _passwordController,
                         ),
-                      ),
+                      ),SizedBox(height: 2),
+                      if (_errorMessagePassword != null)
+                        Container(
+                          alignment: Alignment.topLeft,
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            _errorMessagePassword!,
+                            style: TextStyle(
+                              color: failed,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
                       SizedBox(height: 40),
                       Center(
                         child: RichText(

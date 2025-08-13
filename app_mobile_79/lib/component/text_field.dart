@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:taskify/shared/style.dart';
-import 'package:passwordfield/passwordfield.dart';
 import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -41,40 +40,9 @@ class CustomTextField extends StatelessWidget {
             ),
           ),
           if (password)
-            PasswordField(
-              controller: controller,
-              passwordDecoration: PasswordDecoration(
-                inputPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 1),
-                hintStyle: TextStyle(
-                  fontSize: 12,
-                  color: grey,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              backgroundColor: secondaryColor.withOpacity(1),
-              passwordConstraint: r'.*[@$#.*].*',
-              hintText: placeholder,
-              border: PasswordBorder(
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(
-                    color: secondaryColor,
-                    width: 1,
-                  ),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(width: 2, color: Colors.red.shade200),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(
-                    color: mainColor,
-                    width: 1,
-                  ),
-                ),
-              ),
-              errorMessage: 'must contain special character either . * @ # \$',
+            PasswordInput(
+              controller: controller!,
+              placeholder: placeholder!,
             )
           else
             TextField(
@@ -85,18 +53,19 @@ class CustomTextField extends StatelessWidget {
               ),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: disable! ? greySoft : secondaryColor,
+                fillColor: disable! ? greySoft : mainColor.withOpacity(0.2),
                 hintText: placeholder,
                 hintStyle: TextStyle(
                   fontSize: 12,
-                  color: black,
+                  color: grey,
                   fontWeight: FontWeight.w600,
                 ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 1),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 12, vertical: 1),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: BorderSide(
-                    color: secondaryColor,
+                    color: mainColor,
                     width: 1,
                   ),
                 ),
@@ -104,14 +73,14 @@ class CustomTextField extends StatelessWidget {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: BorderSide(
-                    color: mainColor,
+                    color: secondaryColor,
                     width: 1,
                   ),
                 ),
               ),
               enabled: !disable!,
               inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9@#$%^&*()_+!\- =[\]{};"|,:.<>/?]*')),
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
               ],
             )
         ],
@@ -120,92 +89,74 @@ class CustomTextField extends StatelessWidget {
   }
 }
 
+class PasswordInput extends StatefulWidget {
+  final TextEditingController controller;
+  final String placeholder;
 
-class CustomTextFieldNoLabel extends StatelessWidget {
-  final String? placeholder;
-  final bool password;
-  final TextEditingController? controller;
-  final void Function(String)? onSubmitted;
+  const PasswordInput({
+    super.key,
+    required this.controller,
+    required this.placeholder,
+  });
 
-  const CustomTextFieldNoLabel({
-    Key? key,
-    this.placeholder,
-    this.password = false,
-    this.controller,
-    this.onSubmitted,
-  }) : super(key: key);
+  @override
+  State<PasswordInput> createState() => _PasswordInputState();
+}
+
+class _PasswordInputState extends State<PasswordInput> {
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          if (password)
-            PasswordField(
-              controller: controller, // Gunakan controller untuk PasswordField
-              passwordDecoration: PasswordDecoration(
-                inputPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 1),
-                hintStyle: TextStyle(
-                  fontSize: 12,
-                  color: grey,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              backgroundColor: secondaryColor.withOpacity(1),
-              // passwordConstraint: r'.*[@$#.*].*',
-              hintText: placeholder,
-              border: PasswordBorder(
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(
-                    color: secondaryColor,
-                    width: 1,
-                  ),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(width: 2, color: Colors.red.shade200),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(
-                    color: mainColor,
-                    width: 1,
-                  ),
-                ),
-              ),
-              errorMessage: 'must contain special character either . * @ # \$',
-            )
-          else
-            TextField(
-              controller: controller, // Gunakan controller untuk TextField
-              style: TextStyle(
-                fontSize: 16,
-                  color: grey,
-                  fontWeight: FontWeight.w600,
-              ),
-              decoration: InputDecoration(
-                hintText: placeholder,
-                hintStyle: TextStyle(
-                  fontSize: 16,
-                  color: grey,
-                  fontWeight: FontWeight.w600,
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 1),
-                enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: secondaryColor,
-                width: 1.0,
-              ),
-            ),
-                enabled: true,
-              ),
-              onSubmitted: onSubmitted,
-            )
-        ],
+    return TextFormField(
+      controller: widget.controller,
+      obscureText: _obscureText,
+      style: TextStyle(
+        fontSize: 12,
+        color: black,
       ),
+      decoration: InputDecoration(
+        hintText: widget.placeholder,
+        hintStyle: TextStyle(
+          fontSize: 12,
+          color: grey,
+          fontWeight: FontWeight.w600,
+        ),
+        filled: true,
+        fillColor: mainColor.withOpacity(0.2), // ganti sesuai mainColor
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 1),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: mainColor, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: secondaryColor, width: 1),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.red.shade200, width: 1),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.red.shade400, width: 2),
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureText ? Icons.visibility_off : Icons.visibility,
+            color: Colors.grey,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) return 'Password cannot be empty';
+        return null;
+      },
     );
   }
 }
