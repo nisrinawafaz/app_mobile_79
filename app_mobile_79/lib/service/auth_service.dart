@@ -16,6 +16,7 @@ class AuthService {
       }),
     );
 
+
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -29,7 +30,7 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('tokenAuth');
     if (token == null) {
-      throw Exception("Token not found, please login first");
+      throw Exception("Unauthorized");
     }
 
     final response = await http.get(
@@ -39,7 +40,7 @@ class AuthService {
         'Authorization': 'Bearer $token',
       },
     );
-
+    
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {

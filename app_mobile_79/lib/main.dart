@@ -1,3 +1,4 @@
+import 'package:taskify/pages/home.dart';
 import 'package:taskify/pages/login.dart';
 import 'package:flutter/material.dart';
 
