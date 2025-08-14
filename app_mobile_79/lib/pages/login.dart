@@ -26,52 +26,43 @@ class _LoginPageState extends State<LoginPage> {
     final username = _usernameController.text;
     final password = _passwordController.text;
 
-    bool hasError = false;
-
     setState(() {
-      if (username.isEmpty) {
-        _errorMessageUsername = "Username cannot be empty";
-        hasError = true;
-      }
-
-      if (password.isEmpty) {
-        _errorMessagePassword = "Password cannot be empty";
-        hasError = true;
-      }
+      _errorMessageUsername =
+          _usernameController.text.isEmpty ? "Username cannot be empty" : null;
+      _errorMessagePassword =
+          _passwordController.text.isEmpty ? "Password cannot be empty" : null;
     });
 
-    if (hasError) {
-      return;
-    }
+    if (_errorMessageUsername == null && _errorMessagePassword == null) {
+      try {
+        final result = await AuthService().login(username, password);
 
-    try {
-      final result = await AuthService().login(username, password);
+        final accessToken = result['accessToken'];
+        if (accessToken == null) throw Exception("Token tidak ditemukan");
 
-      final accessToken = result['accessToken'];
-      if (accessToken == null) throw Exception("Token tidak ditemukan");
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('tokenAuth', accessToken);
 
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('tokenAuth', accessToken);
-
-      Map<String, dynamic> decodedToken = Jwt.parseJwt(accessToken);
-      String name = decodedToken['firstName'];
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => HomePage(name: name)),
-        (route) => false,
-      );
-    } catch (e) {
-      setState(() {
-        _errorMessage = e is Exception
-            ? e.toString().replaceFirst("Exception: ", "")
-            : e.toString();
-        _errorMessageUsername = null;
-        _errorMessagePassword = null;
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+        Map<String, dynamic> decodedToken = Jwt.parseJwt(accessToken);
+        String name = decodedToken['firstName'];
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => HomePage(name: name)),
+          (route) => false,
+        );
+      } catch (e) {
+        setState(() {
+          _errorMessage = e is Exception
+              ? e.toString().replaceFirst("Exception: ", "")
+              : e.toString();
+          _errorMessageUsername = null;
+          _errorMessagePassword = null;
+        });
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -139,21 +130,10 @@ class _LoginPageState extends State<LoginPage> {
                           label: "Username",
                           placeholder: "Enter your Username",
                           controller: _usernameController,
+                          errorText: _errorMessageUsername,
                         ),
                       ),
                       SizedBox(height: 2),
-                      if (_errorMessageUsername != null)
-                        Container(
-                          alignment: Alignment.topLeft,
-                          padding: EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            _errorMessageUsername!,
-                            style: TextStyle(
-                              color: failed,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
                       SizedBox(height: 10),
                       Semantics(
                         label: 'Password Text Field',
@@ -162,20 +142,9 @@ class _LoginPageState extends State<LoginPage> {
                           password: true,
                           placeholder: "Enter your password",
                           controller: _passwordController,
+                          errorText: _errorMessagePassword,
                         ),
-                      ),SizedBox(height: 2),
-                      if (_errorMessagePassword != null)
-                        Container(
-                          alignment: Alignment.topLeft,
-                          padding: EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            _errorMessagePassword!,
-                            style: TextStyle(
-                              color: failed,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
+                      ),
                       SizedBox(height: 40),
                       Center(
                         child: RichText(
@@ -198,14 +167,6 @@ class _LoginPageState extends State<LoginPage> {
                                   fontWeight: FontWeight.w600,
                                   color: mainColor,
                                 ),
-                                // recognizer: TapGestureRecognizer()
-                                //   ..onTap = () {
-                                //     Navigator.push(
-                                //       context,
-                                //       MaterialPageRoute(
-                                //           builder: (context) => RegisterPage()),
-                                //     );
-                                //   },
                               ),
                             ],
                           ),

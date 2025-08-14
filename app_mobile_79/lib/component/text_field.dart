@@ -8,6 +8,7 @@ class CustomTextField extends StatelessWidget {
   final bool password;
   final TextEditingController? controller;
   final bool? disable;
+  final String? errorText;
 
   const CustomTextField({
     Key? key,
@@ -16,6 +17,7 @@ class CustomTextField extends StatelessWidget {
     this.password = false,
     this.controller,
     this.disable = false,
+    this.errorText,
   }) : super(key: key);
 
   @override
@@ -43,6 +45,7 @@ class CustomTextField extends StatelessWidget {
             PasswordInput(
               controller: controller!,
               placeholder: placeholder!,
+              errorText: errorText,
             )
           else
             TextField(
@@ -62,26 +65,26 @@ class CustomTextField extends StatelessWidget {
                 ),
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 12, vertical: 1),
+                enabled: true,
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(
-                    color: mainColor,
-                    width: 1,
-                  ),
+                  borderSide: BorderSide(color: mainColor, width: 1),
                 ),
-                enabled: true,
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(
-                    color: secondaryColor,
-                    width: 1,
-                  ),
+                  borderSide: BorderSide(color: secondaryColor, width: 1),
                 ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: Colors.red.shade200, width: 1),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: Colors.red.shade400, width: 2),
+                ),
+                errorText: errorText,
               ),
               enabled: !disable!,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
-              ],
             )
         ],
       ),
@@ -92,11 +95,13 @@ class CustomTextField extends StatelessWidget {
 class PasswordInput extends StatefulWidget {
   final TextEditingController controller;
   final String placeholder;
+  final String? errorText;
 
   const PasswordInput({
     super.key,
     required this.controller,
     required this.placeholder,
+    this.errorText,
   });
 
   @override
@@ -141,6 +146,7 @@ class _PasswordInputState extends State<PasswordInput> {
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(color: Colors.red.shade400, width: 2),
         ),
+        errorText: widget.errorText,
         suffixIcon: IconButton(
           icon: Icon(
             _obscureText ? Icons.visibility_off : Icons.visibility,
@@ -153,10 +159,6 @@ class _PasswordInputState extends State<PasswordInput> {
           },
         ),
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) return 'Password cannot be empty';
-        return null;
-      },
     );
   }
 }
