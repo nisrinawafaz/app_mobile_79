@@ -2,15 +2,15 @@
 
 # Instalasi
 
-1. Pastikan sudah terinstall Flutter SDK:
-   -- Flutter Installation Guide
-2. Clone repository:
-   -- git clone <URL_REPOSITORY>
-   -- cd taskify
-3. Install dependencies:
-   -- flutter pub get
-4. Jalankan aplikasi:
-   --flutter run
+1. Pastikan sudah terinstall Flutter SDK:<br>
+   - Flutter Installation Guide
+2. Clone repository:<br>
+   - git clone <URL_REPOSITORY><br>
+   - cd taskify
+4. Install dependencies:<br>
+   - flutter pub get
+5. Jalankan aplikasi:<br>
+   - flutter run
 
 ![Login Page](assets/images/page/login_page.jpg)
 ![Home Page](assets/images/page/home_page.jpg)
