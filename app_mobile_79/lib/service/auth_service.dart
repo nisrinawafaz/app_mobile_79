@@ -16,7 +16,6 @@ class AuthService {
       }),
     );
 
-
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -40,9 +39,24 @@ class AuthService {
         'Authorization': 'Bearer $token',
       },
     );
-    
+
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
+    } else if (response.statusCode == 401) {
+      final newTokens = await refreshToken();
+      await prefs.setString('tokenAuth', newTokens['accessToken']);
+      await prefs.setString('refreshToken', newTokens['refreshToken']);
+
+      final retry = await http.get(
+        Uri.parse('$baseUrl/users/me'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${newTokens['accessToken']}',
+        },
+      );
+      if (retry.statusCode == 200) return jsonDecode(retry.body);
+
+      throw Exception("Failed to get user data after token refresh");
     } else {
       try {
         final error = jsonDecode(response.body);
@@ -52,5 +66,25 @@ class AuthService {
         throw Exception("Failed to get user data");
       }
     }
+  }
+
+  Future<Map<String, dynamic>> refreshToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('refreshToken');
+
+    if (token == null) throw Exception("No refresh token available");
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/auth/refresh'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'refreshToken': token,
+        'expiresInMins': 30,
+      }),
+    );
+
+    if (response.statusCode == 200) return jsonDecode(response.body);
+
+    throw Exception("Refresh token failed");
   }
 }

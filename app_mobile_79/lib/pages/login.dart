@@ -38,10 +38,13 @@ class _LoginPageState extends State<LoginPage> {
         final result = await AuthService().login(username, password);
 
         final accessToken = result['accessToken'];
+        final refreshToken = result['refreshToken'];
+
         if (accessToken == null) throw Exception("Token tidak ditemukan");
 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('tokenAuth', accessToken);
+        await prefs.setString('refreshToken', refreshToken);
 
         Map<String, dynamic> decodedToken = Jwt.parseJwt(accessToken);
         String name = decodedToken['firstName'];
