@@ -1,15 +1,20 @@
 # app_mobile_79
 
-A new Flutter project.
+# Instalasi
 
-## Getting Started
+1. Pastikan sudah terinstall Flutter SDK:
+   -- Flutter Installation Guide
+2. Clone repository:
+   -- git clone <URL_REPOSITORY>
+   -- cd taskify
+3. Install dependencies:
+   -- flutter pub get
+4. Jalankan aplikasi:
+   --flutter run
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+![Login Page](assets/images/page/login_page.jpg)
+![Home Page](assets/images/page/home_page.jpg)
+![Profile Page](assets/images/page/profile_page.jpg)
 
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
