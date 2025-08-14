@@ -90,7 +90,8 @@ class _HomeContentState extends State<HomeContent> {
           ),
         ),
         Container(
-            padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 20.0),
+            padding: EdgeInsets.symmetric(horizontal: 20)
+                .copyWith(top: 50, bottom: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -365,7 +366,7 @@ class _HomeContentState extends State<HomeContent> {
                       fontFamily: 'Poppins'),
                 ),
                 SizedBox(
-                  height: 210,
+                  height: 230,
                   child: ListView.builder(
                     itemCount: tasks.length,
                     itemBuilder: (context, index) {
