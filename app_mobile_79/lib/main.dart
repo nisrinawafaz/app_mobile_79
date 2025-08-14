@@ -1,3 +1,5 @@
+import 'package:jwt_decode/jwt_decode.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskify/pages/home.dart';
 import 'package:taskify/pages/login.dart';
 import 'package:flutter/material.dart';
@@ -35,16 +37,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _initialize() async {
-    // final prefs = await SharedPreferences.getInstance();
-    // final storedToken = prefs.getString('tokenAuth') ?? '';
+    final prefs = await SharedPreferences.getInstance();
+    final accessToken = prefs.getString('tokenAuth') ?? '';
     setState(() {
-      // tokenAuth = storedToken;
-      // if (tokenAuth.isNotEmpty && !isTokenExpired(tokenAuth)) {
-      //   _currentPage = HomePage();
-      // } else {
-      //   _currentPage = LandingPage();
-      // }
-      _currentPage = LoginPage();
+      if (accessToken.isNotEmpty) {
+        Map<String, dynamic> decodedToken = Jwt.parseJwt(accessToken);
+        String name = decodedToken['firstName'];
+        _currentPage = HomePage(
+          name: name,
+        );
+      } else {
+        _currentPage = LoginPage();
+      }
     });
   }
 

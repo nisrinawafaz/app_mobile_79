@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskify/pages/login.dart';
 import 'package:taskify/service/auth_service.dart';
@@ -59,7 +57,6 @@ class _ProfilePageState extends State<ProfilePage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('tokenAuth');
 
-    // keluar dari semua stack, termasuk PersistentTabView
     Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const LoginPage()),
       (route) => false,
@@ -110,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       userData?['email'] ?? '',
                       style: TextStyle(
                         fontFamily: 'Poppins',
-                        fontSize: 16,
+                        fontSize: 14,
                         color: black,
                       ),
                       textAlign: TextAlign.center,
@@ -249,7 +246,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             _buildDetailRow('Phone', userData?['phone']),
                             _buildDetailRow('Address',
                                 '${userData?['address']?['address']}, ${userData?['address']?['city']}, ${userData?['address']?['state']}, ${userData?['address']?['postalCode']}, ${userData?['address']?['country']}'),
-                            _buildDetailRow('MAC', userData?['macAddress']),
                           ],
                         ),
                         SizedBox(height: 10),
@@ -276,7 +272,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     )),
                 SizedBox(height: 25),
                 SizedBox(
-                  width: double.infinity, // otomatis penuh lebar
+                  width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () => _logout(context),
                     style: ElevatedButton.styleFrom(
@@ -284,8 +280,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       backgroundColor: secondaryColor,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 14), // atur tinggi
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                     child: const Text(
                       'Logout',
